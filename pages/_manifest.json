@@ -1,0 +1,49 @@
+{
+  "personal": [
+    "proiect_personal_1",
+    "proiect_personal_2",
+    "proiect_personal_3"
+  ],
+  "3d": [
+    "blender",
+    "3dprint",
+    "inventor",
+    "animator"
+  ],
+  "auto": [
+    "arduino",
+    "raspberry",
+    "plc-siemens",
+    "plc-simulator",
+    "hmi",
+    "mitsubishi",
+    "beckoff",
+    "automatizari_1"
+  ],
+  "prog": [
+    "javascript",
+    "python",
+    "androidstudio",
+    "algorithms",
+    "web"
+  ],
+  "db": [
+    "mysql",
+    "oracle"
+  ],
+  "net": [
+    "retele",
+    "cisco",
+    "lan",
+    "wifi",
+    "itinfrastructure"
+  ],
+  "game": [
+    "unreal",
+    "unity",
+    "android"
+  ],
+  "media": [
+    "proiect_1"
+  ]
+}
