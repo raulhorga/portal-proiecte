@@ -1,113 +1,44 @@
-
 <section class="content-inner">
   <h1>⚙️ Admin</h1>
-  <p>Utilitare pentru administrarea conținutului din <code>/pages</code> folosind <em>File System Access API</em> (Chrome/Edge/Opera).</p>
-
+  <p>Administrează conținutul <code>/pages</code> cu File System Access API.</p>
   <div style="display:grid; gap:16px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
     <div style="border:1px solid #334155; border-radius:12px; padding:12px;">
-      <h2 style="margin-top:0;">Selectează folderul <code>pages</code></h2>
-      <button id="pickPages">Alege folderul <code>pages</code></button>
+      <h2>Selectează folderul <code>pages</code></h2>
+      <button id="pickPages">Alege folderul</button>
       <p id="pickedDir" style="opacity:.8; margin:.5rem 0 0;"></p>
     </div>
-
     <div style="border:1px solid #334155; border-radius:12px; padding:12px;">
-      <h2 style="margin-top:0;">Creează categorie (folder)</h2>
+      <h2>Creează categorie (folder)</h2>
       <label> Nume categorie: <input id="newCategory" placeholder="ex: robotics" /></label>
       <button id="createCategory">Creează folder</button>
     </div>
-
     <div style="border:1px solid #334155; border-radius:12px; padding:12px;">
-      <h2 style="margin-top:0;">Creează subpagină (.html)</h2>
+      <h2>Creează subpagină (.html)</h2>
       <label>Categorie: <input id="fileCategory" placeholder="ex: 3d" /></label><br/>
       <label>Nume fișier: <input id="fileName" placeholder="ex: blender-tips" /></label><br/>
       <button id="createFile">Creează fișier</button>
     </div>
-
     <div style="border:1px solid #334155; border-radius:12px; padding:12px;">
-      <h2 style="margin-top:0;">Manifest</h2>
+      <h2>Manifest</h2>
       <button id="regenManifest">🔄 Regenerează manifest</button>
       <button id="refreshMenus">🔁 Reîncarcă meniurile</button>
     </div>
   </div>
-
   <pre id="log" style="background:#0b1220; padding:12px; border-radius:10px; overflow:auto; border:1px solid #1f2937; margin-top:16px; min-height:80px;"></pre>
-
   <script>
   (function(){
-    const log = (msg) => {
-      const el = document.getElementById('log');
-      el.textContent += (msg + "\\n");
-      el.scrollTop = el.scrollHeight;
-    };
-
+    const log = (msg) => { const el=document.getElementById('log'); el.textContent += (msg+'\\n'); el.scrollTop=el.scrollHeight; };
     let pagesHandle = null;
-
-    async function pickDir(){
-      if (!window.showDirectoryPicker){
-        alert('Browserul nu suportă Directory Picker.');
-        return;
-      }
-      pagesHandle = await window.showDirectoryPicker({ id:'pick-pages' });
-      document.getElementById('pickedDir').textContent = 'Selectat: ' + (pagesHandle.name || '(pages)');
-      log('Folder selectat.');
-    }
-
-    async function ensureCategory(cat){
-      if (!pagesHandle) { alert('Selectează întâi folderul pages.'); return; }
-      const dir = await pagesHandle.getDirectoryHandle(cat, { create: true });
-      return dir;
-    }
-
-    function stubHTML(title){
-      return `<section class="content-inner">
-  <h1>${title}</h1>
-  <p>TODO: Adaugă conținut pentru ${title} aici.</p>
-  <h2>Descriere</h2>
-  <p>Scurtă descriere a proiectului sau secțiunii.</p>
-  <h2>Resurse</h2>
-  <ul>
-    <li>Fișiere</li>
-    <li>Imagini</li>
-    <li>Link-uri externe</li>
-  </ul>
-</section>`;
-    }
-
-    async function createCategory(){
-      const cat = (document.getElementById('newCategory').value || '').trim();
-      if(!cat){ alert('Introdu un nume de categorie.'); return; }
-      await ensureCategory(cat);
-      log('Creat/confirmat folder: ' + cat);
-    }
-
-    async function createFile(){
-      const cat = (document.getElementById('fileCategory').value || '').trim();
-      const name = (document.getElementById('fileName').value || '').trim();
-      if(!cat || !name){ alert('Completează categoria și numele fișierului.'); return; }
-      const dir = await ensureCategory(cat);
-      const fh = await dir.getFileHandle(name.toLowerCase() + '.html', { create: true });
-      const w = await fh.createWritable();
-      const title = name.replace(/[-_]/g,' ').replace(/\b\w/g, c=>c.toUpperCase());
-      await w.write(stubHTML(title));
-      await w.close();
-      log(`Fișier creat: pages/${cat}/${name}.html`);
-    }
-
+    async function pickDir(){ if(!window.showDirectoryPicker){ alert('Browserul nu suportă Directory Picker.'); return; } pagesHandle = await window.showDirectoryPicker({id:'pick-pages'}); document.getElementById('pickedDir').textContent='Selectat: '+(pagesHandle.name||'(pages)'); log('Folder selectat.'); }
+    async function ensureCategory(cat){ if(!pagesHandle){ alert('Selectează întâi folderul pages.'); return null; } return await pagesHandle.getDirectoryHandle(cat,{create:true}); }
+    function stubHTML(title){ return `<section class="content-inner"><h1>${title}</h1><p>TODO: Conținut pentru ${title}.</p></section>`; }
+    async function createCategory(){ const cat=(document.getElementById('newCategory').value||'').trim(); if(!cat){ alert('Introdu un nume.'); return;} await ensureCategory(cat); log('Creat/confirmat: '+cat); }
+    async function createFile(){ const cat=(document.getElementById('fileCategory').value||'').trim(); const name=(document.getElementById('fileName').value||'').trim(); if(!cat||!name){ alert('Completează câmpurile.'); return; } const dir=await ensureCategory(cat); if(!dir) return; const fh=await dir.getFileHandle(name.toLowerCase()+'.html',{create:true}); const w=await fh.createWritable(); const title=name.replace(/[-_]/g,' ').replace(/\b\w/g, c=>c.toUpperCase()); await w.write(stubHTML(title)); await w.close(); log(`Fișier creat: pages/${cat}/${name}.html`); }
     document.getElementById('pickPages').addEventListener('click', pickDir);
     document.getElementById('createCategory').addEventListener('click', createCategory);
     document.getElementById('createFile').addEventListener('click', createFile);
-
-    document.getElementById('regenManifest').addEventListener('click', async ()=>{
-      if (!window.generateManifestInBrowser){ alert('Funcția globală lipsește.'); return; }
-      await window.generateManifestInBrowser();
-      log('Manifest regenerat.');
-    });
-
-    document.getElementById('refreshMenus').addEventListener('click', async ()=>{
-      if (!window.buildMenus){ alert('Funcția globală lipsește.'); return; }
-      await window.buildMenus();
-      log('Meniuri reîncărcate.');
-    });
+    document.getElementById('regenManifest').addEventListener('click', async ()=>{ if(!window.generateManifestInBrowser){ alert('Funcția lipsește.'); return;} await window.generateManifestInBrowser(); log('Manifest regenerat.'); });
+    document.getElementById('refreshMenus').addEventListener('click', async ()=>{ if(!window.buildMenus){ alert('Funcția lipsește.'); return;} await window.buildMenus(); log('Meniuri reîncărcate.'); });
   })();
   </script>
 </section>
