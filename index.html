@@ -5,64 +5,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portal Proiecte</title>
   <style>
-    body {font-family: Arial, sans-serif; background: #0f172a; color: #e5e7eb; margin: 0;}
-    header {position: sticky; top: 0; background: #111827; padding: 10px; border-bottom: 1px solid #333; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;}
-    header a, button {background: #1e293b; color: #e5e7eb; border: none; border-radius: 8px; padding: 8px 12px; text-decoration: none; cursor: pointer;}
-    header a:hover, button:hover {background: #334155;}
-    .menu {position: relative;}
-    .menu-list {display: none; position: absolute; background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 8px; z-index: 10;}
-    .menu[aria-expanded="true"] .menu-list {display: block;}
-    .menu-list div {padding: 6px; cursor: pointer;}
-    .menu-list div:hover {background: #334155;}
-    main {display: flex; max-width: 1200px; margin: 20px auto; gap: 20px;}
-    aside {width: 250px;}
-    aside a {display: block; color: #e5e7eb; text-decoration: none; padding: 8px; border-radius: 8px;}
-    aside a:hover {background: #334155;}
-    section {flex: 1; background: #1e293b; padding: 20px; border-radius: 12px; min-height: 60vh;}
+    :root{--bg:#0f172a;--panel:#111827;--text:#e5e7eb;}
+    *{box-sizing:border-box} html,body{height:100%}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text)}
+    header{position:sticky;top:0;z-index:50;background:#111827;border-bottom:1px solid #263241}
+    .container{max-width:1200px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .brand{font-weight:700;display:flex;gap:8px;align-items:center}
+    .dot{width:10px;height:10px;border-radius:50%;background:linear-gradient(135deg,#22d3ee,#38bdf8)}
+    .btn{background:#1e293b;border:1px solid #2b3b4e;border-radius:10px;color:inherit;padding:8px 12px;text-decoration:none;cursor:pointer}
+    .btn:hover{background:#334155}
+    .menu{position:relative}
+    .menu-list{display:none;position:absolute;top:calc(100% + 6px);left:0;min-width:220px;background:#1e293b;border:1px solid #334155;border-radius:12px;padding:8px;box-shadow:0 14px 30px rgba(0,0,0,.35);max-height:60vh;overflow:auto}
+    .menu[aria-expanded="true"] .menu-list{display:block}
+    .menu-title{font-size:12px;text-transform:uppercase;opacity:.7;margin:4px 6px}
+    .item{padding:8px 10px;border-radius:8px;cursor:pointer}
+    .item:hover{background:#334155}
+    main{display:flex;gap:18px;max-width:1200px;margin:20px auto;padding:0 16px}
+    aside{width:250px}
+    aside a{display:block;color:inherit;text-decoration:none;padding:8px;border-radius:10px}
+    aside a:hover{background:#334155}
+    #content{flex:1;background:#1e293b;border:1px solid #263241;border-radius:14px;min-height:60vh;padding:20px}
+    .content-inner{max-width:100%;margin:0 auto}
+    code{background:#0b1220;border-radius:6px;padding:2px 6px}
+    .viewer{width:100%;min-height:60vh;border:0;border-radius:14px;background:#0b1220}
   </style>
 </head>
 <body>
 <header>
-  <div class="container bar">
+  <div class="container">
     <div class="brand"><span class="dot"></span><span>Portal Proiecte</span></div>
-    <a class="btn primary" href="#home" data-route>🏠 HOME</a>
+    <a class="btn" href="#home" data-route>🏠 HOME</a>
     <a class="btn" href="#admin" data-route>⚙️ Admin</a>
     <button class="btn" id="regen-manifest">🔄 Regenerează manifest</button>
-    <div id="menus" style="display:flex;gap:6px;flex-wrap:wrap;margin-left:8px"></div>
+    <div id="menus" style="display:flex;gap:6px;flex-wrap:wrap;margin-left:auto"></div>
   </div>
 </header>
-<main>
-  <aside>
-    <a href="#limbi" data-route>Limbi străine</a>
-    <a href="#skilluri" data-route>Skilluri</a>
-    <a href="#filme" data-route>Filme</a>
-    <a href="#carti" data-route>Cărți</a>
-  </aside>
-  <section id="content"><div id="content-inner"></div></section>
-</main>
-<script>
-// ====== Config auto-menuri din manifest ======
-// Manifest JSON: /pages/_manifest.json
-// Exemplu: { "3d": ["blender","3dprint"], "auto": ["arduino","plc-siemens"] }
 
+<main class="main">
+  <aside class="sidebar">
+    <div class="card">
+      <a class="side-link" href="#limbi" data-route>Limbi străine</a>
+      <a class="side-link" href="#skilluri" data-route>Skilluri</a>
+      <a class="side-link" href="#filme" data-route>Filme</a>
+      <a class="side-link" href="#carti" data-route>Cărți</a>
+    </div>
+  </aside>
+  <section id="content"><div class="content-inner" id="content-inner"></div></section>
+</main>
+
+<script>
 const view = document.getElementById('content-inner');
 const content = document.getElementById('content');
 const menusRoot = document.getElementById('menus');
 
 const HUMAN_TITLES = {
-  personal: '📁 Proiecte personale', media: '📷 Photo / Video / Drone',
-  '3d': '🧱 3D Design', auto: '⚙️ Automatizări', prog: '💻 Programare',
-  db: '🗄️ DataBases', net: '🌐 Network', game: '🎮 Gaming',
-  'plc-siemens': 'PLC Siemens', itinfrastructure: 'IT_infrastructure'
+  personal:'📁 Proiecte personale', media:'📷 Photo / Video / Drone',
+  '3d':'🧱 3D Design', auto:'⚙️ Automatizări', prog:'💻 Programare',
+  db:'🗄️ DataBases', net:'🌐 Network', game:'🎮 Gaming',
+  'plc-siemens':'PLC Siemens', itinfrastructure:'IT_infrastructure'
 };
 
 function toTitle(slug){
-  if (HUMAN_TITLES[slug]) return HUMAN_TITLES[slug];
-  return slug.replace(/[-_]/g,' ').split(' ').map(s=> s? s[0].toUpperCase()+s.slice(1): s).join(' ');
+  if(HUMAN_TITLES[slug]) return HUMAN_TITLES[slug];
+  return slug.replace(/[-_]/g,' ').split(' ').map(s=>s?s[0].toUpperCase()+s.slice(1):s).join(' ');
 }
 
-async function buildMenus(){
-  const manifest = await loadManifest();
+// ------- Manifest loader (HTTP) sau fallback local (file://) -------
+async function loadManifestHTTP(){
+  try{
+    const res = await fetch('pages/_manifest.json?v='+Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    return await res.json();
+  }catch(e){
+    console.warn('Manifest HTTP eșuat:', e);
+    return null;
+  }
+}
+
+async function buildMenusFromManifest(manifest){
   menusRoot.innerHTML = '';
   Object.keys(manifest).forEach(cat=>{
     const items = manifest[cat];
@@ -81,118 +101,116 @@ async function buildMenus(){
   });
 }
 
-async function loadManifest(){
-  try{
-    const res = await fetch('pages/_manifest.json', {cache:'no-store'});
-    if(!res.ok) throw new Error(`Manifest HTTP ${res.status}`);
-    const data = await res.json();
-    if (!data || typeof data !== 'object') throw new Error('Manifest invalid');
-    return data;
-  }catch(err){ console.error('Eroare manifest:', err); 
-    view.innerHTML = `<h1>Manifest lipsă sau invalid</h1><p>Asigură-te că <code>pages/_manifest.json</code> există în repo și are formatul corect. Eroare: ${String(err)}</p>`;
-    return {}; }
-});
-    if(!res.ok) throw new Error('manifest missing');
-    return await res.json();
-  }catch(err){ console.warn('Manifest lipsă. Creează pages/_manifest.json'); return {}; }
-}
-
-async function render(route){
-  const key = route || 'home'; content.setAttribute('aria-busy','true');
-  if (key && key !== 'home'){
-    const url = `pages/${key}.html`;
-    try{ const res = await fetch(url, {cache:'no-store'});
-      if(res.ok){
-        const html = await res.text(); view.innerHTML = html;
-        const scripts = [...view.querySelectorAll('script')];
-        for(const old of scripts){ const s=document.createElement('script'); if(old.src) s.src=old.src; else s.textContent=old.textContent; document.body.appendChild(s); old.remove(); }
-        content.setAttribute('aria-busy','false'); return;
-      } else {
-        view.innerHTML = `<h1>Pagina nu a fost găsită</h1><p>Nu pot încărca <code>${url}</code> (HTTP ${res.status}). Verifică exact numele fișierului (litere mici!) și că este în repo.</p>`;
-        content.setAttribute('aria-busy','false'); return;
-      }
-    }catch(e){
-      console.error('Eroare fetch', e);
-      view.innerHTML = `<h1>Eroare la încărcare</h1><p>Nu pot încărca <code>${url}</code>. Vezi consola pentru detalii.</p>`;
-      content.setAttribute('aria-busy','false'); return;
-    }
-  }
-  view.innerHTML = `<h1>Bun venit! 👋</h1><p>Adaugă foldere și fișiere în <code>/pages</code>. Manifestul <code>_manifest.json</code> va popula automat meniurile.</p>`;
-  content.setAttribute('aria-busy','false');
-}.html`, {cache:'no-store'}); if(res.ok){
-      const html = await res.text();
-      view.innerHTML = html;
-      // rulează orice <script> din paginile încărcate
-      const scripts = [...view.querySelectorAll('script')];
-      for (const old of scripts){
-        const s = document.createElement('script');
-        if (old.src) s.src = old.src; else s.textContent = old.textContent;
-        document.body.appendChild(s); old.remove();
-      }
-      content.setAttribute('aria-busy','false'); return; } }catch(e){}
-  }
-  view.innerHTML = `<h1>Bun venit! 👋</h1><p>Adaugă foldere și fișiere în <code>/pages</code>. Manifestul <code>_manifest.json</code> va popula automat meniurile.</p>`;
-  content.setAttribute('aria-busy','false');
-}.html`, {cache:'no-store'}); if(res.ok){ view.innerHTML = await res.text(); content.setAttribute('aria-busy','false'); return; } }catch(e){}
-  }
-  view.innerHTML = `<h1>Bun venit! 👋</h1><p>Adaugă foldere și fișiere în <code>/pages</code>. Manifestul <code>_manifest.json</code> va popula automat meniurile.</p>`;
-  content.setAttribute('aria-busy','false');
-}
-
-function init(){ buildMenus().then(()=>{ render(location.hash.replace(/^#/,'')||'home'); }); }
-window.addEventListener('hashchange',()=> render(location.hash.replace(/^#/,'') ) );
-
-function closeAllMenus(){ document.querySelectorAll('.menu').forEach(m=> m.setAttribute('aria-expanded','false')); }
-
-document.addEventListener('click', (e)=>{ const m = e.target.closest('div.menu'); if(m){ const open = m.getAttribute('aria-expanded')==='true'; closeAllMenus(); m.setAttribute('aria-expanded', String(!open)); } else { closeAllMenus(); } });
-
-// ====== Generator de manifest direct din browser (File System Access API) ======
-// Limite: funcționează în Chrome, Edge, Opera (desktop). Nu poate lista directoare
-// pe server fără permisiune. Util pentru proiectul local.
-async function generateManifestInBrowser(){
+async function buildMenusFromPicker(){
   if (!window.showDirectoryPicker){
-    alert('Browserul tău nu suportă încă Directory Picker. Folosește Chrome/Edge sau scriptul Node/Python.');
+    alert('Pentru mod local fără server folosește Chrome/Edge desktop.');
     return;
   }
+  const dirHandle = await window.showDirectoryPicker({ id:'pick-pages' });
+  const manifest = {};
+  for await (const [name, handle] of dirHandle.entries()){
+    if (handle.kind === 'directory'){
+      const files = [];
+      for await (const [fname, fhandle] of handle.entries()){
+        const low = fname.toLowerCase();
+        if (fhandle.kind === 'file' && low.endsWith('.html')){
+          files.push(low.replace(/\\.html$/,''));
+        }
+      }
+      if (files.length) manifest[name] = files.sort();
+    }
+  }
+  await buildMenusFromManifest(manifest);
+}
+
+// ------- Render (cu IFRAME) -------
+async function render(route){
+  const key = route || 'home';
+  content.setAttribute('aria-busy','true');
+
+  if (!key || key === 'home'){
+    view.innerHTML = `<h1>Bun venit! 👋</h1><p>Alege un proiect din meniu.</p>`;
+    content.setAttribute('aria-busy','false');
+    return;
+  }
+
+  const url = `pages/${key}.html?v=` + Date.now(); // cache-buster
+  view.innerHTML = '';
+  const frame = document.createElement('iframe');
+  frame.className = 'viewer';
+  frame.loading = 'lazy';
+  frame.src = url;
+  frame.addEventListener('error', ()=> {
+    view.innerHTML = `<h1>Pagina nu a fost găsită</h1><p>Nu pot încărca <code>${url}</code>.</p>`;
+    content.setAttribute('aria-busy','false');
+  });
+  frame.addEventListener('load', ()=> content.setAttribute('aria-busy','false'));
+  view.appendChild(frame);
+}
+
+// ------- Dropdown handling -------
+function closeAllMenus(){ document.querySelectorAll('.menu').forEach(m=> m.setAttribute('aria-expanded','false')); }
+document.addEventListener('click', (e)=>{
+  const m = e.target.closest('div.menu');
+  if(m){ const open = m.getAttribute('aria-expanded')==='true'; closeAllMenus(); m.setAttribute('aria-expanded', String(!open)); }
+  else { closeAllMenus(); }
+});
+
+// ------- Manifest în browser (scrie pe disc local) -------
+async function generateManifestInBrowser(){
+  if (!window.showDirectoryPicker){ alert('Browserul nu suportă Directory Picker.'); return; }
   try{
-    // Alege folderul "pages"
     const dirHandle = await window.showDirectoryPicker({ id: 'pick-pages' });
-    // Construim manifestul
     const manifest = {};
     for await (const [name, handle] of dirHandle.entries()){
       if (handle.kind === 'directory'){
-        const cat = name;
         const files = [];
         for await (const [fname, fhandle] of handle.entries()){
-          if (fhandle.kind === 'file' && fname.toLowerCase().endsWith('.html')){
-            files.push(fname.replace(/\.html$/i,'').toLowerCase());
+          const low = fname.toLowerCase();
+          if (fhandle.kind === 'file' && low.endsWith('.html')){
+            files.push(low.replace(/\\.html$/,''));
           }
         }
-        if (files.length) manifest[cat] = files.sort();
+        if (files.length) manifest[name] = files.sort();
       }
     }
-    // Scriem _manifest.json
     const fileHandle = await dirHandle.getFileHandle('_manifest.json', { create: true });
     const writable = await fileHandle.createWritable();
     await writable.write(new Blob([JSON.stringify(manifest, null, 2)], {type:'application/json'}));
     await writable.close();
     alert('Manifest regenerat cu succes!');
-    // Reîmprospătăm meniurile
-    await buildMenus();
-  } catch (e){
-    if (e && e.name !== 'AbortError'){
-      console.error(e);
-      alert('A apărut o eroare la generarea manifestului. Vezi consola.');
-    }
-  }
+    await buildMenusFromManifest(manifest);
+  }catch(e){ if(e && e.name!=='AbortError'){ console.error(e); alert('Eroare la generarea manifestului.'); } }
 }
-
-
 document.getElementById('regen-manifest').addEventListener('click', generateManifestInBrowser);
-// expune funcțiile pentru pagini încărcate (ex: Admin)
 window.generateManifestInBrowser = generateManifestInBrowser;
-window.buildMenus = buildMenus;
 
+// ------- Init (HTTP → manifest | file:// → picker) -------
+async function init(){
+  if (location.protocol.startsWith('http')){
+    const manifest = await loadManifestHTTP();
+    if (manifest) await buildMenusFromManifest(manifest);
+    else {
+      // fallback dacă manifestul lipsește și tot ești pe http
+      const hint = document.createElement('div');
+      hint.style.margin = '12px 0';
+      hint.innerHTML = `<button class="btn" id="pickPagesNow">📂 Alege folderul <code>pages</code></button>
+        <span style="opacity:.8;margin-left:8px">Manifest lipsă. Poți popula meniurile din dosarul local.</span>`;
+      document.querySelector('header .container').appendChild(hint);
+      document.getElementById('pickPagesNow').addEventListener('click', buildMenusFromPicker);
+    }
+  } else {
+    // file://
+    const hint = document.createElement('div');
+    hint.style.margin = '12px 0';
+    hint.innerHTML = `<button class="btn" id="pickPagesNow">📂 Alege folderul <code>pages</code></button>
+      <span style="opacity:.8;margin-left:8px">Rulezi local fără server — selectează dosarul <code>pages</code> ca să populăm meniurile.</span>`;
+    document.querySelector('header .container').appendChild(hint);
+    document.getElementById('pickPagesNow').addEventListener('click', buildMenusFromPicker);
+  }
+  render(location.hash.replace(/^#/,'')||'home');
+}
+window.addEventListener('hashchange',()=> render(location.hash.replace(/^#/,'') ));
 init();
 </script>
 </body>
