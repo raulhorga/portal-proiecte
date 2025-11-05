@@ -186,6 +186,58 @@ async function generateManifestInBrowser(){
     }
   }
 }
+<script>
+// înlocuiește ambele fetch-uri din index.html cu variantele de mai jos:
+
+async function loadManifest(){
+  try{
+    const res = await fetch('pages/_manifest.json?v=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error(`Manifest HTTP ${res.status}`);
+    return await res.json();
+  }catch(err){
+    console.error('Eroare manifest:', err);
+    return {};
+  }
+}
+
+async function render(route){
+  const key = route || 'home';
+  content.setAttribute('aria-busy','true');
+
+  if (key && key !== 'home'){
+    const url = `pages/${key}.html?v=` + Date.now();   // 👈 cache-buster
+    try{
+      const res = await fetch(url, {cache:'no-store'});
+      if(res.ok){
+        const html = await res.text();
+        view.innerHTML = html;
+
+        // rulează <script>-urile din paginile încărcate
+        const scripts = [...view.querySelectorAll('script')];
+        for (const old of scripts){
+          const s = document.createElement('script');
+          if (old.src) s.src = old.src; else s.textContent = old.textContent;
+          document.body.appendChild(s); old.remove();
+        }
+        content.setAttribute('aria-busy','false'); return;
+      } else {
+        view.innerHTML = `<h1>Pagina nu a fost găsită</h1>
+        <p>Nu pot încărca <code>${url}</code> (HTTP ${res.status}).</p>`;
+        content.setAttribute('aria-busy','false'); return;
+      }
+    }catch(e){
+      console.error('Eroare fetch', e);
+      view.innerHTML = `<h1>Eroare la încărcare</h1>
+      <p>Nu pot încărca <code>${url}</code>. Vezi consola pentru detalii.</p>`;
+      content.setAttribute('aria-busy','false'); return;
+    }
+  }
+
+  view.innerHTML = `<h1>Bun venit! 👋</h1>
+  <p>Alege un proiect din meniu.</p>`;
+  content.setAttribute('aria-busy','false');
+}
+</script>
 
 document.getElementById('regen-manifest').addEventListener('click', generateManifestInBrowser);
 // expune funcțiile pentru pagini încărcate (ex: Admin)
